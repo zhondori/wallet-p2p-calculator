@@ -46,7 +46,7 @@ const pureProfitPercentage = computed(() => {
 });
 
 // Telegram WebApp initialization
-const webapp = window?.Telegram?.WebApp
+const webapp = (window as any).Telegram?.WebApp as any
 
 onMounted(() => {
   if (webapp) {
@@ -91,7 +91,7 @@ onMounted(() => {
             <span class="text-gray-600">Umumiy Foyda:</span>
             <span :class="{'text-green-600': profit > 0, 'text-red-600': profit < 0}" class="font-semibold text-end">
               {{ profit < 0 ? '-' : '+' }}{{ formatter.format(Math.abs(profit)) }}
-              <span class="text-sm ml-1">({{ profitPercentage < 0 ? '-' : '+' }}{{ Math.abs(profitPercentage) }}%)</span>
+              <span class="text-sm ml-1">({{ Number(profitPercentage) < 0 ? '-' : '+' }}{{ Math.abs(Number(profitPercentage)) }}%)</span>
             </span>
           </div>
           
@@ -99,7 +99,7 @@ onMounted(() => {
             <span class="text-gray-600">Sof Foyda:</span>
             <span :class="{'text-green-600': (profit - fee) > 0, 'text-red-600': (profit - fee) < 0}" class="font-semibold">
               {{ (profit - fee) < 0 ? '-' : '+' }}{{ formatter.format(Math.abs(profit - fee)) }}
-              <span class="text-sm ml-1">({{ pureProfitPercentage < 0 ? '-' : '+' }}{{ Math.abs(pureProfitPercentage) }}%)</span>
+              <span class="text-sm ml-1">({{ Number(pureProfitPercentage) < 0 ? '-' : '+' }}{{ Math.abs(Number(pureProfitPercentage)) }}%)</span>
             </span>
           </div>
 
