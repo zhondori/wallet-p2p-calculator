@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 const formatter = new Intl.NumberFormat('en-US', {
   style: 'decimal',
@@ -45,6 +45,25 @@ const pureProfitPercentage = computed(() => {
   return (((profit.value - fee.value) / totalSellingPrice.value) * 100).toFixed(2);
 });
 
+// Telegram WebApp initialization
+const webapp = window?.Telegram?.WebApp
+
+onMounted(() => {
+  if (webapp) {
+    // Enable closing confirmation
+    webapp.enableClosingConfirmation()
+    
+    // Expand webapp to maximum available height
+    webapp.expand()
+    
+    // Set header color based on theme
+    webapp.setHeaderColor(webapp.themeParams.bg_color)
+    
+    // Ready event
+    webapp.ready()
+  }
+})
+
 </script>
 
 <template>
@@ -64,11 +83,41 @@ const pureProfitPercentage = computed(() => {
         <h3>{{ formatter.format(profitInUZS) }} UZS</h3>
       </div>
     </div>
-    <div class="text-lg font-semibold">
-      <h3>Foyda: {{ formatter.format(profit) }} ({{ profitPercentage }}%)</h3>
-      <h3>Sof foyda: {{ formatter.format(profit - fee) }} ({{ pureProfitPercentage }}%)</h3>
-      <h3>Wallet fee: {{ formatter.format(fee) }}</h3>
-      <h3>1% foyda: {{ formatter.format(totalSellingPrice / 100) }}</h3>
+    <div class="grid gap-4">
+      <div class="flex flex-col gap-3 p-4 rounded-lg bg-gray-50">
+        <h3 class="text-xl font-bold text-gray-700">Foyda Ko'rsatkichlari</h3>
+        <div class="grid gap-3">
+          <div class="flex justify-between items-center p-3 rounded bg-white shadow-sm">
+            <span class="text-gray-600">Umumiy Foyda:</span>
+            <span :class="{'text-green-600': profit > 0, 'text-red-600': profit < 0}" class="font-semibold text-end">
+              {{ profit < 0 ? '-' : '+' }}{{ formatter.format(Math.abs(profit)) }}
+              <span class="text-sm ml-1">({{ profitPercentage < 0 ? '-' : '+' }}{{ Math.abs(profitPercentage) }}%)</span>
+            </span>
+          </div>
+          
+          <div class="flex justify-between items-center p-3 rounded bg-white shadow-sm">
+            <span class="text-gray-600">Sof Foyda:</span>
+            <span :class="{'text-green-600': (profit - fee) > 0, 'text-red-600': (profit - fee) < 0}" class="font-semibold">
+              {{ (profit - fee) < 0 ? '-' : '+' }}{{ formatter.format(Math.abs(profit - fee)) }}
+              <span class="text-sm ml-1">({{ pureProfitPercentage < 0 ? '-' : '+' }}{{ Math.abs(pureProfitPercentage) }}%)</span>
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center p-3 rounded bg-white shadow-sm">
+            <span class="text-gray-600">Wallet Fee:</span>
+            <span class="font-semibold text-orange-600">
+              {{ fee < 0 ? '-' : '' }}{{ formatter.format(Math.abs(fee)) }}
+            </span>
+          </div>
+
+          <div class="flex justify-between items-center p-3 rounded bg-white shadow-sm">
+            <span class="text-gray-600">1% Foyda:</span>
+            <span class="font-semibold text-blue-600">
+              {{ (totalSellingPrice / 100) < 0 ? '-' : '' }}{{ formatter.format(Math.abs(totalSellingPrice / 100)) }}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
