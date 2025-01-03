@@ -12,7 +12,6 @@ const formatter = new Intl.NumberFormat('en-US', {
 const total = ref(0);
 const buy = ref(0);
 const sell = ref(0);
-const percent = ref(0);
 const extraFee = ref(0);
 
 const profit = computed(() => {
@@ -32,9 +31,6 @@ const totalSellingPrice = computed(() => {
   return total.value * sell.value;
 });
 
-const profitInUZS = computed(() => {
-  return ((totalSellingPrice.value / 100) * percent.value);
-});
 
 const profitPercentage = computed(() => {
   if (!totalSellingPrice.value) return 0;
